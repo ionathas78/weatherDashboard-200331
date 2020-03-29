@@ -33,10 +33,10 @@ const _OPENWEATHER_ZIP_QUERY = "?zip=%ZIP%,us";                 //   where %ZIP%
 
 //  What if I also showed the city on a map?
 
-map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},           //  lat/lon go here
-    zoom: 8                         //  Slightly larger than a city
-});
+// map = new google.maps.Map(document.getElementById('map'), {
+//     center: {lat: -34.397, lng: 150.644},           //  lat/lon go here
+//     zoom: 8                         //  Slightly larger than a city
+// });
 
 // WHEN I view current weather conditions for that city
 // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
