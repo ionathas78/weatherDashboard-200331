@@ -2,3 +2,50 @@
     font-family: 'Baloo Thambi 2', sans-serif;
     font-size: 2vw;
 }
+
+header {
+    background-color: blue;
+    color: #eee;
+    /* width: 100%; */
+}
+
+.nav-header {
+    color: #eee;
+    background-color: green;
+    width: 20vw;
+}
+
+.nav-item {
+    color: #eee;
+}
+
+.nav-item .active {
+    background-color: #666;
+    color: #eee;
+}
+
+.nav-item:hover {
+    background-color: #33c;
+    color: #eee;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: blue;
+    color: #eee;
+    line-height: 3vw;
+}
+
+/* Google Maps */
+#map {
+    height: 100%;
+}
+html, body {
+    height: 20vh;
+    width: 20vw;
+    margin: 0;
+    padding: 0;
+}
