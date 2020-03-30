@@ -37,8 +37,10 @@ const _MAPQUEST_APIKEY = "&key=s57L9cRQk0CZGiyqnipytbVrVQw9j2Dn";               
 
 
 var _cityName = "";
+var _currentDate = moment().format("dddd, MMMM Do YYYY");
 var _currentWeather = [];
 var _forecastWeather = [];
+var _placeData = [];
 var _searchIndex = -1;
 
 //  **  Functions
@@ -158,8 +160,10 @@ function runAjaxQuery(queryString, queryType) {
 
                 //  Add this to the Search Dropdown
 
-                console.log(response);
-                console.log(msgResponse);
+                _cityName = msgResponse
+
+                // console.log(response);
+                // console.log(msgResponse);
                 break;
             default:
         };
@@ -182,6 +186,8 @@ function renderResult(queryType) {
             //  output result to forecast pane.
             break;
         case _QTYPE_PLACE:
+            $("#city-name").text(_cityName);
+            $("#current-date").text(_currentDate);
             break;
         default:
     }
