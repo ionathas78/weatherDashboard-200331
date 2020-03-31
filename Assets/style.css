@@ -31,6 +31,37 @@ header {
     color: #eee;
 }
 
+body {
+    background-color: #66a;
+}
+
+#forecast-panel {
+    background-color: darkblue;
+
+}
+
+.forecast-item {
+    background: skyblue;
+    border: 1px solid black; 
+    border-radius: 2vw;
+    box-shadow: 1.5vw 1.5vw 1vw #222;
+    margin: 2vw 1vw;
+    width: 20%; 
+    height: 12vw; 
+    text-align: center;
+}
+
+#weather-panel {
+    background-color: grey;
+}
+
+.history-item {
+    border: 1px dotted grey; 
+    width: 20%; 
+    height: 20vh; 
+    text-align: center;
+}
+
 footer {
     background-color: blue;
     color: #eee;
