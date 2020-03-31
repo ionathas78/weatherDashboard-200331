@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/CSS" href="Assets/style.css">
 </head>
 <body>
-    <header class="container d-inline-flex fixed-top col-12 m-0 p-0">
+    <header class="container d-inline-flex fixed-top col-12 vh-50 m-0 p-0">
         <ul class="nav col-8 col-sm-8 m-0 align-left">
             <li class="nav-header px-3">
                 <p>Weather Dashboard</p>
@@ -38,46 +38,54 @@
             </form>
         </nav>
     </header>
+
     <section>
-        <div style="height: 7vh;"><p> </p></div>
+        <div style="height: 6vw;"><p> </p></div>
         <h1 id="city-name" class="text-center">City Name</h1>
         <p id="current-date" class="font-italic text-center">Current Date</p>
-        <hr>        
+        <!-- <hr>         -->
     </section>
-    <div class="container">
+    <section class="container">
         <div class="row">
-            <div class="container col-9">
-                <div id="forecast-panel" class="row">
+            <div class="container col-sm-12 col-md-9">
+                <article id="forecast-panel" class="row">
                     <ul id="forecast-list" class="d-inline-flex col-12" style="list-style: none;">
                         <!-- Here is the list for the 5-day forecast -->
-                        <li class="forecast-item">0</li>
-                        <li class="forecast-item">1</li>
-                        <li class="forecast-item">2</li>
-                        <li class="forecast-item">3</li>
-                        <li class="forecast-item">4</li>
+                        <li id="forecast-item0" class="forecast-item">0</li>
+                        <li id="forecast-item1" class="forecast-item">1</li>
+                        <li id="forecast-item2" class="forecast-item">2</li>
+                        <li id="forecast-item3" class="forecast-item">3</li>
+                        <li id="forecast-item4" class="forecast-item">4</li>
                     </ul>
-                </div>
-                <div id="weather-panel" class="row">
-                    <p style="border: 1px solid green; margin: 2vw; width: 100%; height: 25vh;">Weather Content</p>
-                </div>
+                </article>
+                <article id="weather-panel" class="row">
+                    <div id="weather-content">
+                        <h2>Current Conditions:</h2>
+                        <hr>
+                        <p><span>Temperature: </span><span id="current-temperature"></span></p>
+                        <p><span>Relative Humidity: </span><span id="current-humidity"></span></p>
+                        <p><span>Wind Speed: </span><span id="current-wind-speed"></span></p>
+                        <p id="uv-index"><span>UV Index: </span><span id="current-uv-index"></span></p>
+                    </div>
+                </article>
             </div>
 
-            <div id="map" class="col-3 d-flex align-self-center" style="height: 40vh; border: 1px solid red;"></div>
+            <aside id="map" class="col-sm-12 col-md-3 d-flex align-self-center" style="height: 40vw; border: 1px solid red;"></aside>
             <!-- This div is used by Google Maps -->
         </div>
-    </div>
-    <hr>
-    <div class="container">
+    </section>
+    <!-- <hr> -->
+    <section class="container">
         <div class="row">
             <ul id="history-list" class="d-inline-flex col-12" style="list-style: none;">
-                <li class="history-item">0</li>
-                <li class="history-item">1</li>
-                <li class="history-item">2</li>
-                <li class="history-item">3</li>
-                <li class="history-item">4</li>
+                <li id="history-item0" class="history-item">0</li>
+                <li id="history-item1" class="history-item">1</li>
+                <li id="history-item2" class="history-item">2</li>
+                <li id="history-item3" class="history-item">3</li>
+                <li id="history-item4" class="history-item">4</li>
             </ul>
         </div>
-    </div>
+    </section>
 
     <footer class="text-center fixed-bottom">
         <p>&copy;2020 Jonathan Andrews</p>

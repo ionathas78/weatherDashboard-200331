@@ -42,6 +42,7 @@ var _currentWeather = [];
 var _forecastWeather = [];
 var _placeData = [];
 var _searchIndex = -1;
+var _histIndex = -1;
 
 //  **  Functions
 
@@ -144,6 +145,7 @@ function runAjaxQuery(queryString, queryType) {
                 queryPlace(response);
                 $("#city-name").text(_cityName);
                 $("#current-date").text(_currentDate);
+                renderCurrent();
                 break;
 
             case _QTYPE_FORECAST_WEATHER:
@@ -186,33 +188,62 @@ function renderFiveDay() {
 
     var fiveDay = _forecastWeather[_searchIndex];
     
-    var forecastList = $("#forecast-list");
+    var forecastList = $("[id^='forecast-item']");
+    // var forecasts = forecastList.children();
 
-    for (var i = 0; i < forecastList.children.length; i++) {
-        childI = forecastList.children(i);
-        let weatherMain = fiveDay.list[i].weather[0].main;
-        let weatherDescription = fiveDay.list[i].weather[0].description;
-        let weatherTemperature = kelvinToFahrenheit(fiveDay.list[i].main.temp);
-        let weatherHumidity = fiveDay.list[i].main.humidity;
-        let backgroundImage = getWeatherIconURL(fiveDay.list[i].weather[0].id, 2);
+    for (var i = 0; i < forecastList.length; i++) {
+        childI = $("#forecast-item" + i);
+        let idx = i * 8;
+        let dayName = moment(fiveDay.list[idx].dt_txt).format("ddd");
+        let weatherMain = fiveDay.list[idx].weather[0].main;
+        let weatherDescription = fiveDay.list[idx].weather[0].description;
+        let weatherTemperature = kelvinToFahrenheit(fiveDay.list[idx].main.temp);
+        let weatherHumidity = fiveDay.list[idx].main.humidity;
 
-        var description = " --- " + weatherMain + " --- " + "\n" +
-                    weatherDescription + "\n" +
-                    "Temp: " + weatherTemperature.toFixed(1) + "\xB0 F" + "\n" +
-                    "Humidity: " + weatherHumidity + "%";
+        let backgroundImage = getWeatherIconURL(fiveDay.list[idx].weather[0].id);
+
+        childI.text(dayName);
+        var pBlank = $("<p>").text(" ");
+        var pBlank2 = $("<p>").text("  ");
+        var pBlank3 = $("<p>").text("   ");
+        var pMain = $("<p>").text(" --- " + weatherMain + " --- ");
+        pMain.addClass("forecast-text");
+        var pDescription = $("<p>").text(weatherDescription);
+        pDescription.addClass("forecast-text");
+        var pTemperature = $("<p>").text("Temp: " + weatherTemperature.toFixed(1) + "\xB0 F");
+        pTemperature.addClass("forecast-text");
+        var pHumidity = $("<p>").text("Humidity: " + weatherHumidity + "%");
+        pHumidity.addClass("forecast-text");
+
+        let imageSize = "100%";
+        if (window.screen.availWidth < 450) {
+            imageSize = "66%";
+        }
 
         let styleCSS = "background-image: url(" + backgroundImage + "); " +
-                    "background-size: contain; background-repeat: no-repeat;"
+                    "background-position: top; background-repeat: no-repeat;" +
+                    "background-size: " + imageSize + ";";
         
         childI.attr("style", styleCSS);
-        childI.text(description);
+        childI.append(pBlank, pBlank2, pBlank3, pMain, pDescription, pTemperature, pHumidity);
         // console.log(childI);
+    };
+};
 
-        if (i => 5) {
-            break;
-        };
-    }
-}
+/**
+ * Commit current weather to screen
+ */
+function renderCurrent() {
+
+    // WHEN I view current weather conditions for that city
+    // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
+
+    // WHEN I view the UV index
+    // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
+
+    
+
+};
 
 /**
  * Commit results to screen
@@ -242,12 +273,7 @@ function renderResult(queryType) {
 //     zoom: 8                         //  Slightly larger than a city
 // });
 
-// WHEN I view current weather conditions for that city
-// THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
 
-
-// WHEN I view the UV index
-// THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
 
 
 
@@ -404,9 +430,9 @@ function stateFullName(stateAbbreviation) {
  * @param {*} weatherCode OpenWeatherMap weather code
  * @param {*} sizeScale 2x is standard (?)
  */
-function getWeatherIconURL(weatherCode, sizeScale) {
+function getWeatherIconURL(weatherCode) {
     const iconURL = "http://openweathermap.org/img/wn/";
-    const urlScale = "@" + sizeScale + "x.png";
+    const urlScale = "@2x.png";
 
     var iconName = weatherIcon(weatherCode);
 
