@@ -39,31 +39,43 @@
         </nav>
     </header>
     <section>
-        <div style="height: 8vh;"><p> </p></div>
+        <div style="height: 7vh;"><p> </p></div>
         <h1 id="city-name" class="text-center">City Name</h1>
         <p id="current-date" class="font-italic text-center">Current Date</p>
         <hr>        
     </section>
     <div class="container">
         <div class="row">
-            <div id="map" class="col-3 float-left" style="height: 40vh; border: 1px solid red;"></div>
-            <!-- This div is used by Google Maps -->
-
             <div class="container col-9">
                 <div id="forecast-panel" class="row">
                     <ul id="forecast-list" class="d-inline-flex col-12" style="list-style: none;">
                         <!-- Here is the list for the 5-day forecast -->
-                        <li style="border: 1px solid black; width: 20%; height: 15vh;">0</li>
-                        <li style="border: 1px solid black; width: 20%; height: 15vh;">1</li>
-                        <li style="border: 1px solid black; width: 20%; height: 15vh;">2</li>
-                        <li style="border: 1px solid black; width: 20%; height: 15vh;">3</li>
-                        <li style="border: 1px solid black; width: 20%; height: 15vh;">4</li>                    
+                        <li style="border: 1px solid black; width: 20%; height: 15vh; text-align: center;">0</li>
+                        <li style="border: 1px solid black; width: 20%; height: 15vh; text-align: center;">1</li>
+                        <li style="border: 1px solid black; width: 20%; height: 15vh; text-align: center;">2</li>
+                        <li style="border: 1px solid black; width: 20%; height: 15vh; text-align: center;">3</li>
+                        <li style="border: 1px solid black; width: 20%; height: 15vh; text-align: center;">4</li>                    
                     </ul>
                 </div>
                 <div id="weather-panel" class="row">
                     <p style="border: 1px solid green; margin: 2vw; width: 100%; height: 25vh;">Weather Content</p>
                 </div>
             </div>
+
+            <div id="map" class="col-3 d-flex align-self-center" style="height: 40vh; border: 1px solid red;"></div>
+            <!-- This div is used by Google Maps -->
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="row">
+            <ul id="history-list" class="d-inline-flex col-12" style="list-style: none;">
+                <li style="border: 1px dotted grey; width: 20%; height: 20vh; text-align: center;">0</li>
+                <li style="border: 1px dotted grey; width: 20%; height: 20vh; text-align: center;">1</li>
+                <li style="border: 1px dotted grey; width: 20%; height: 20vh; text-align: center;">2</li>
+                <li style="border: 1px dotted grey; width: 20%; height: 20vh; text-align: center;">3</li>
+                <li style="border: 1px dotted grey; width: 20%; height: 20vh; text-align: center;">4</li>
+            </ul>
         </div>
     </div>
 

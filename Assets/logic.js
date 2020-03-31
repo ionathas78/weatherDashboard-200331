@@ -142,10 +142,15 @@ function runAjaxQuery(queryString, queryType) {
             case _QTYPE_CURRENT_WEATHER:
                 _currentWeather.push(response);
                 queryPlace(response);
+                $("#city-name").text(_cityName);
+                $("#current-date").text(_currentDate);
                 break;
+
             case _QTYPE_FORECAST_WEATHER:
                 _forecastWeather.push(response);
+                renderFiveDay();
                 break;
+
             case _QTYPE_PLACE:
                 let cityName = response.results[0].locations[0].adminArea5;
                 let stateName = response.results[0].locations[0].adminArea3;
@@ -172,6 +177,44 @@ function runAjaxQuery(queryString, queryType) {
 };
 
 /**
+ * Commit five-day forecast to screen
+ */
+function renderFiveDay() {
+    // WHEN I view future weather conditions for that city
+    // THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, 
+    //          the temperature, and the humidity
+
+    var fiveDay = _forecastWeather[_searchIndex];
+    
+    var forecastList = $("#forecast-list");
+
+    for (var i = 0; i < forecastList.children.length; i++) {
+        childI = forecastList.children(i);
+        let weatherMain = fiveDay.list[i].weather[0].main;
+        let weatherDescription = fiveDay.list[i].weather[0].description;
+        let weatherTemperature = kelvinToFahrenheit(fiveDay.list[i].main.temp);
+        let weatherHumidity = fiveDay.list[i].main.humidity;
+        let backgroundImage = getWeatherIconURL(fiveDay.list[i].weather[0].id, 2);
+
+        var description = " --- " + weatherMain + " --- " + "\n" +
+                    weatherDescription + "\n" +
+                    "Temp: " + weatherTemperature.toFixed(1) + "\xB0 F" + "\n" +
+                    "Humidity: " + weatherHumidity + "%";
+
+        let styleCSS = "background-image: url(" + backgroundImage + "); " +
+                    "background-size: contain; background-repeat: no-repeat;"
+        
+        childI.attr("style", styleCSS);
+        childI.text(description);
+        // console.log(childI);
+
+        if (i => 5) {
+            break;
+        };
+    }
+}
+
+/**
  * Commit results to screen
  * @param {*} queryType 1 - Current Weather, 2 - 5-Day Forecast
  */
@@ -186,8 +229,6 @@ function renderResult(queryType) {
             //  output result to forecast pane.
             break;
         case _QTYPE_PLACE:
-            $("#city-name").text(_cityName);
-            $("#current-date").text(_currentDate);
             break;
         default:
     }
@@ -209,8 +250,6 @@ function renderResult(queryType) {
 // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
 
 
-// WHEN I view future weather conditions for that city
-// THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
 
 
 // WHEN I click on a city in the search history
@@ -218,6 +257,14 @@ function renderResult(queryType) {
 
 
 };
+
+/**
+ * Convert Kelvin temperatures to Fahrenheit
+ * @param {*} degreesKelvin Temperature in Kelvin
+ */
+function kelvinToFahrenheit(degreesKelvin) {
+    return (degreesKelvin - 273.15) * 9/5 + 32;
+}
 
 /**
  * Given state abbreviation, return full name
@@ -350,7 +397,81 @@ function stateFullName(stateAbbreviation) {
         default:    
     };
     return returnString;
+};
+
+/**
+ * Get URL for weather icon PNG
+ * @param {*} weatherCode OpenWeatherMap weather code
+ * @param {*} sizeScale 2x is standard (?)
+ */
+function getWeatherIconURL(weatherCode, sizeScale) {
+    const iconURL = "http://openweathermap.org/img/wn/";
+    const urlScale = "@" + sizeScale + "x.png";
+
+    var iconName = weatherIcon(weatherCode);
+
+    return iconURL + iconName + urlScale;
 }
+
+/**
+ * Return appropriate icon for weather code
+ * @param {*} weatherCode OpenWeatherMap weather code
+ */
+function weatherIcon(weatherCode) {
+    var iconCode = "";
+
+    if (weatherCode >= 801) {
+        //  Group 80x: Clouds
+        if (weatherCode => 803) {
+            //  Broken or overcast clouds
+            iconCode = "04";
+        } else if (weatherCode == 802) {
+            //  Scattered clouds
+            iconCode = "03";
+        } else if (weatherCode == 801) {
+            //  Few clouds
+            iconCode = "02";
+        } else if (weatherCode == 800) {
+            //  Group 800: Clear
+            iconCode = "01";
+        }
+        if (((moment().hour > 5) && (moment().hour < 17))) {
+            //  Is Daytime
+            iconCode += "d";
+        } else {
+            iconCode += "n";
+        }
+
+    } else if (weatherCode >= 701) {
+        //  Group 7xx: Atmosphere
+        iconCode = "50d";
+    } else if (weatherCode >= 600) {
+        //  Group 6xx: Snow
+        iconCode = "13d";
+    } else if (weatherCode >= 500) {
+        //  Group 5xx: Rain
+        if (weatherCode >= 520) {
+            //  Shower Rain
+            iconCode = "09d";
+        } else if (weatherCode == 511) {
+            //  Freezing Rain
+            iconCode = "13d";
+        } else {
+            //  Rain
+            iconCode = "10d";
+        }
+
+    } else if (weatherCode >= 400) {
+        //  There's no Group 200...
+    } else if (weatherCode >= 300) {
+        //  Group 3xx: Drizzle
+        iconCode = "09d";
+    } else if (weatherCode >= 200) {
+        //  Group 2xx: Thunderstorm
+        iconCode = "11d";
+    }
+    return iconCode;
+};
 
 //  **  Events
 
