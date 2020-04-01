@@ -1,13 +1,14 @@
 # 06 Server-Side APIs: Weather Dash
 
-> Using server-side APIs to fetch data can be a real bugbear, and I needed a task that could challenge my ability to
-> procure and utilize them. What better than a dashboard that would provide current and forecasted weather conditions
-> for the city I select?
+> This web app takes a city the user enters, displays weather information about it, and keeps the city in a short
+> list on the page to let the user refer back to it as necessary.
 
 The idea of this app was to provide an interface that allowed the user to check weather conditions based on hir input:
-ze would enter a city, and the app would call the API to retrieve the necessary data for display. I wanted to include
-a map of the area, as well, but the Google API proved flaky and I didn't have time to get the MapQuest API integrated
-in the website. That'll be a project for another time.
+ze enters a city, and the app calls the API to retrieve the necessary data for display. Pretty basic. I wanted to include
+a map of the area, as well, but the Google API proved flaky and I didn't have time to get the MapQuest API fully integrated
+in the website. I also would've liked to use a dropdown in the input box to give the user another history list ze could
+use to populate the fields. It also would've been nice if the user could click on a day in the forecast panel to bring up
+more details about it in the center pane. Those'll be projects for another time.
 
 
 ## User Story
