@@ -40,7 +40,7 @@
     </header>
 
     <section>
-        <div style="height: 6vw;"><p> </p></div>
+        <div style="height: 4vw;"><p> </p></div>
         <h1 id="city-name" class="text-center">City Name</h1>
         <p id="current-date" class="font-italic text-center">Current Date</p>
         <!-- <hr>         -->
@@ -55,7 +55,6 @@
                             <p class="forecast-day">0</p>
                             <p> </p>
                             <p>  </p>
-                            <p class="forecast-text align-self-center text-center"> --- <span class="forecast-main"></span> --- </p>
                             <p class="forecast-text align-self-center text-center"><span class="forecast-description">--</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Temp: </span><span class="forecast-temperature">--</span><span>°F</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Hum: </span><span class="forecast-humidity">--</span><span>%</span></p>
@@ -64,7 +63,6 @@
                             <p class="forecast-day">1</p>
                             <p> </p>
                             <p>  </p>
-                            <p class="forecast-text align-self-center text-center"> --- <span class="forecast-main"></span> --- </p>
                             <p class="forecast-text align-self-center text-center"><span class="forecast-description">--</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Temp: </span><span class="forecast-temperature">--</span><span>°F</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Hum: </span><span class="forecast-humidity">--</span><span>%</span></p>
@@ -73,7 +71,6 @@
                             <p class="forecast-day">2</p>
                             <p> </p>
                             <p>  </p>
-                            <p class="forecast-text align-self-center text-center"> --- <span class="forecast-main"></span> --- </p>
                             <p class="forecast-text align-self-center text-center"><span class="forecast-description">--</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Temp: </span><span class="forecast-temperature">--</span><span>°F</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Hum: </span><span class="forecast-humidity">--</span><span>%</span></p>
@@ -82,7 +79,6 @@
                             <p class="forecast-day">3</p>
                             <p> </p>
                             <p>  </p>
-                            <p class="forecast-text align-self-center text-center"> --- <span class="forecast-main"></span> --- </p>
                             <p class="forecast-text align-self-center text-center"><span class="forecast-description">--</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Temp: </span><span class="forecast-temperature">--</span><span>°F</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Hum: </span><span class="forecast-humidity">--</span><span>%</span></p>
@@ -91,7 +87,6 @@
                             <p class="forecast-day">4</p>
                             <p> </p>
                             <p>  </p>
-                            <p class="forecast-text align-self-center text-center"> --- <span class="forecast-main"></span> --- </p>
                             <p class="forecast-text align-self-center text-center"><span class="forecast-description">--</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Temp: </span><span class="forecast-temperature">--</span><span>°F</span></p>
                             <p class="forecast-text align-self-center text-center"><span>Hum: </span><span class="forecast-humidity">--</span><span>%</span></p>
@@ -101,12 +96,16 @@
                 </article>
                 <article id="weather-panel" class="row">
                     <div id="weather-content">
-                        <h2>Current Conditions:</h2>
+                        <h2 id="current-header">Current Conditions:</h2>
                         <hr>
-                        <p><span>Temperature: </span><span id="current-temperature"></span></p>
-                        <p><span>Relative Humidity: </span><span id="current-humidity"></span></p>
-                        <p><span>Wind Speed: </span><span id="current-wind-speed"></span></p>
-                        <p id="uv-index"><span>UV Index: </span><span id="current-uv-index"></span></p>
+                        <p><span>Weather: </span><span id="current-description"></span></p>
+                        <p><span>Temperature: </span><span id="current-temperature"></span><span>°F</span></p>
+                        <p><span>Relative Humidity: </span><span id="current-humidity"></span><span>%</span></p>
+                        <p><span>Wind Speed: </span><span id="current-wind-speed"></span><span> mph</span></p>
+                        <hr>
+                        <div class="uv-panel">
+                            <p id="uv-index"><span>UV Index: </span><span id="current-uv-index"></span></p>
+                        </div>
                     </div>
                 </article>
             </div>

@@ -2,7 +2,8 @@
 
 const _QTYPE_CURRENT_WEATHER = 1;
 const _QTYPE_FORECAST_WEATHER = 2;
-const _QTYPE_PLACE = 3;
+const _QTYPE_UVINDEX = 3;
+const _QTYPE_PLACE = 4;
 
 const _GOOGLECLOUD_APIKEY = "&key=AIzaSyDi4oH60AbRlXQ_8dxOXMErKrg4Vs1nED8";
 
@@ -10,6 +11,7 @@ const _GOOGLECLOUD_APIKEY = "&key=AIzaSyDi4oH60AbRlXQ_8dxOXMErKrg4Vs1nED8";
 const _OPENWEATHER_BASE = "https://api.openweathermap.org/data/2.5";           
 const _OPENWEATHER_CURRENT_APICALL = "/weather";                                //  For current weather conditions
 const _OPENWEATHER_5DAY_APICALL = "/forecast";                                  //  For the 5-day forecast    
+const _OPENWEATHER_UV_APICALL = "/uvi";                                         //  For the UV Index
 const _OPENWEATHER_APIKEY = "&appid=e986f4791a0ed4a43eb9ec657994cadf";          //  API key
 
 //  For forecast by city
@@ -40,6 +42,7 @@ var _cityName = "";
 var _currentDate = moment().format("dddd, MMMM Do YYYY");
 var _currentWeather = [];
 var _forecastWeather = [];
+var _uvIndex = [];
 var _placeData = [];
 var _searchIndex = -1;
 var _histIndex = -1;
@@ -114,11 +117,12 @@ function queryWeather(searchTerm, queryType) {
 };
 
 /**
- * Given Search Term and the base API call, parses term into search query and execute search
- * @param {*} currentWeatherResponse Term to call for search
+ * Parses given weather object to retrieve location data for detailed location data
+ * @param {*} currentWeatherResponse Response from Current Weather query
  */
 function queryPlace(currentWeatherResponse) {
     var apiCall = _MAPQUEST_BASE;
+    var queryString = "";
 
     var apiKey = _MAPQUEST_APIKEY;
     var latlonString = _MAPQUEST_LATLON.replace("%LAT%", currentWeatherResponse.coord.lat);
@@ -127,6 +131,23 @@ function queryPlace(currentWeatherResponse) {
     queryString = apiCall + _MAPQUEST_PLACE_APICALL + latlonString + apiKey;
 
     runAjaxQuery(queryString, _QTYPE_PLACE);
+}
+
+/**
+ * Parses given weather object to retrieve location data for UV query
+ * @param {*} currentWeatherResponse Response from Current Weather query
+ */
+function queryUVIndex(currentWeatherResponse) {
+    var apiCall = _OPENWEATHER_BASE;
+    var queryString = "";
+
+    var apiKey = _OPENWEATHER_APIKEY;
+    var latLonString = _OPENWEATHER_LATLON_QUERY.replace("%LAT%", currentWeatherResponse.coord.lat);
+    latLonString = latLonString.replace("%LON%", currentWeatherResponse.coord.lon);
+
+    queryString = apiCall + _OPENWEATHER_UV_APICALL + latLonString + apiKey;
+
+    runAjaxQuery(queryString, _QTYPE_UVINDEX);
 }
 
 /**
@@ -142,15 +163,21 @@ function runAjaxQuery(queryString, queryType) {
         switch (queryType) {
             case _QTYPE_CURRENT_WEATHER:
                 _currentWeather.push(response);
+                
                 queryPlace(response);
-                $("#city-name").text(_cityName);
-                $("#current-date").text(_currentDate);
+                queryUVIndex(response);
+
                 renderCurrent();
                 break;
 
             case _QTYPE_FORECAST_WEATHER:
                 _forecastWeather.push(response);
                 renderFiveDay();
+                break;
+
+            case _QTYPE_UVINDEX:
+                _uvIndex.push(response);
+                renderUVIndex(response.value);
                 break;
 
             case _QTYPE_PLACE:
@@ -168,10 +195,10 @@ function runAjaxQuery(queryString, queryType) {
                 //  Add this to the Search Dropdown
 
                 _cityName = msgResponse
-
-                // console.log(response);
-                // console.log(msgResponse);
+                $("#city-name").text(_cityName);
+                $("#current-date").text(_currentDate);
                 break;
+
             default:
         };
         renderResult(queryType);
@@ -186,24 +213,20 @@ function renderFiveDay() {
     // THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, 
     //          the temperature, and the humidity
 
-    var fiveDay = _forecastWeather[_searchIndex];
+    let fiveDay = _forecastWeather[_searchIndex];
     
-    var forecastList = $("[id^='forecast-item']");
-    // var forecasts = forecastList.children();
-
+    let forecastList = $("[id^='forecast-item']");
     for (var i = 0; i < forecastList.length; i++) {
         childI = $("#forecast-item" + i);
-        let idx = i * 8;
+        let idx = i * 8 + 4;            //  The 5-day forecast is arranged into 40 3-hour blocks, so we have to offset.
         let dayName = moment(fiveDay.list[idx].dt_txt).format("ddd");
-        let weatherMain = fiveDay.list[idx].weather[0].main;
         let weatherDescription = fiveDay.list[idx].weather[0].description;
         let weatherTemperature = kelvinToFahrenheit(fiveDay.list[idx].main.temp).toFixed(1);
         let weatherHumidity = fiveDay.list[idx].main.humidity;
 
-        let backgroundImage = getWeatherIconURL(fiveDay.list[idx].weather[0].id);
-
+        let backgroundImage = getWeatherIconURL(fiveDay.list[idx].weather[0].icon);
+        
         childI.children(".forecast-day").text(dayName);
-        childI.find(".forecast-main").text(weatherMain);
         childI.find(".forecast-description").text(weatherDescription);
         childI.find(".forecast-temperature").text(weatherTemperature);
         childI.find(".forecast-humidity").text(weatherHumidity);
@@ -218,8 +241,6 @@ function renderFiveDay() {
                     "background-size: " + imageSize + ";";
         
         childI.attr("style", styleCSS);
-        // childI.append(pBlank, pBlank2, pBlank3, pMain, pDescription, pTemperature, pHumidity);
-        // console.log(childI);
     };
 };
 
@@ -234,16 +255,112 @@ function renderCurrent() {
     // WHEN I view the UV index
     // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
     
-    var currentWeather = _currentWeather[_searchIndex];
+    let currentWeather = _currentWeather[_searchIndex];
+
+    let weatherContent = $("#weather-content");
+    let weatherDescription = currentWeather.weather[0].description;
+    let weatherTemperature = kelvinToFahrenheit(currentWeather.main.temp).toFixed(1);
+    let weatherHumidity = currentWeather.main.humidity;
+    let weatherWindSpeed = metersPerSecondToMilesPerHour(currentWeather.wind.speed).toFixed(1);
+    let backgroundImage = getWeatherIconURL(currentWeather.weather[0].icon);
+    let imageSize = "33%";
+    let styleCSS = "background-image: url(" + backgroundImage + "); " +
+                "background-position: right; background-repeat: no-repeat;" +
+                "background-size: " + imageSize + ";";
 
 
+    populateCurrentPanel("Current Weather", weatherDescription, weatherTemperature, weatherHumidity,
+                weatherWindSpeed)
 
-
+    weatherContent.attr("style", styleCSS);
 };
 
-function populateCurrentPanel () {
+/**
+ * Fill data into the Current Panel and render the UV block
+ * @param {text} headerText Title Header text
+ * @param {text} weatherDescription Verbose description of weather
+ * @param {number} currentTemperature Temperature in Fahrenheit
+ * @param {number} currentHumidity Relative Humidity
+ * @param {number} currentWindSpeed Wind Speed in MPH
+ */
+function populateCurrentPanel (headerText, weatherDescription, currentTemperature, currentHumidity, currentWindSpeed) {
+    let hHeader = $("#current-header");
+    let pDescription = $("#current-description");
+    let pTemperature = $("#current-temperature");
+    let pHumidity = $("#current-humidity");
+    let pWindSpeed = $("#current-wind-speed");
 
+    hHeader.text(headerText);
+    pDescription.text(weatherDescription);
+    pTemperature.text(currentTemperature);
+    pHumidity.text(currentHumidity);
+    pWindSpeed.text(currentWindSpeed);
 };
+
+/**
+ * Fill in the UV Index section and colors it
+ * @param {*} currentUVIndex 
+ */
+function renderUVIndex (currentUVIndex) {
+    pUVIndex = $("#current-uv-index");
+    dUVSection = $(".uv-panel")
+    pUVIndex.text(currentUVIndex);
+
+    let backgroundColorIndex = "";
+    let colorIndex = "";
+
+    switch (Math.floor(currentUVIndex)) {
+        case 0:
+            backgroundColorIndex = "#0f0";
+            colorIndex = "#eee";
+            break;
+        case 1:
+            backgroundColorIndex = "#0b0";
+            colorIndex = "#eee";
+            break;
+        case 2:
+            backgroundColorIndex = "#080";
+            colorIndex = "#eee";
+            break;
+        case 3:
+            backgroundColorIndex = "#ee0";
+            colorIndex = "#000";
+            break;
+        case 4:
+            backgroundColorIndex = "#cc0";
+            colorIndex = "#000";
+            break;
+        case 5:
+            backgroundColorIndex = "#aa0";
+            colorIndex = "#000";
+            break;
+        case 6:
+            backgroundColorIndex = "#c70";
+            colorIndex = "#eee";
+            break;
+        case 7:
+            backgroundColorIndex = "#c40";
+            colorIndex = "#eee";
+            break;
+        case 8:
+            backgroundColorIndex = "#c00";
+            colorIndex = "#eee";
+            break;
+        case 9:
+            backgroundColorIndex = "#a00";
+            colorIndex = "#eee";
+            break;
+        case 10:
+            backgroundColorIndex = "#800";
+            colorIndex = "#eee";
+            break;
+        default:
+            backgroundColorIndex = "#80e";
+            colorIndex = "#eee";
+    }
+
+    dUVSection.attr("style", "background-color: " + backgroundColorIndex + "; color: " + colorIndex + ";");
+}
 
 /**
  * Commit results to screen
@@ -290,6 +407,14 @@ function renderResult(queryType) {
  */
 function kelvinToFahrenheit(degreesKelvin) {
     return (degreesKelvin - 273.15) * 9/5 + 32;
+}
+
+/**
+ * Convert M/S measurements to MPH
+ * @param {*} metersPerSecond Meters per second
+ */
+function metersPerSecondToMilesPerHour(metersPerSecond) {
+    return (metersPerSecond * 2.2369);
 }
 
 /**
@@ -430,11 +555,11 @@ function stateFullName(stateAbbreviation) {
  * @param {*} weatherCode OpenWeatherMap weather code
  * @param {*} sizeScale 2x is standard (?)
  */
-function getWeatherIconURL(weatherCode) {
+function getWeatherIconURL(iconName) {
     const iconURL = "http://openweathermap.org/img/wn/";
     const urlScale = "@2x.png";
 
-    var iconName = weatherIcon(weatherCode);
+    // var iconName = weatherIcon(weatherCode);
 
     return iconURL + iconName + urlScale;
 }
