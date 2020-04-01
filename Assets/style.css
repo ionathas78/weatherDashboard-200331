@@ -95,6 +95,12 @@ body {
     background-color: #888;
 }
 
+.history-text {
+    line-height: 1rem;
+    margin: 0;
+    justify-self: flex-end;
+}
+
 footer {
     background-color: blue;
     color: #eee;

@@ -31,8 +31,9 @@
         <nav class="navbar col-4 col-sm-4 mr-0 justify-content-end navbar-light bg-light">
             <form class="form-inline">
                 <input id="search-city" class="form-control col-8 mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button id="search-city-btn" class="btn btn-outline-success col-3 my-2 my-sm-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="submit">Search</button>
-                <div id="search-dropdown" class="dropdown-menu" aria-labelledby="dLabel">
+                <button id="search-city-btn" class="btn btn-outline-success col-3 my-2 my-sm-0" type="submit">Search</button>
+                <!-- <button id="search-city-btn" class="btn btn-outline-success col-3 my-2 my-sm-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="submit">Search</button> -->
+                <!-- <div id="search-dropdown" class="dropdown-menu" aria-labelledby="dLabel"> -->
                     <!-- Search Results go here -->
                 </div>
             </form>
@@ -40,14 +41,15 @@
     </header>
 
     <section>
-        <div style="height: 4vw;"><p> </p></div>
-        <h1 id="city-name" class="text-center">City Name</h1>
-        <p id="current-date" class="font-italic text-center">Current Date</p>
+        <div style="height: 5vh;"><p> </p></div>
+        <h1 id="city-name" class="text-center mt-0">City Name</h1>
+        <p id="current-date" class="font-italic text-center mb-0">Current Date</p>
         <!-- <hr>         -->
     </section>
     <section class="container">
         <div class="row">
-            <div class="container col-sm-12 col-md-9">
+            <!-- <div class="container col-sm-12 col-md-8"> -->
+            <div class="container col-12">
                 <article id="forecast-panel" class="row">
                     <ul id="forecast-list" class="d-inline-flex col-12" style="list-style: none;">
                         <!-- Here is the list for the 5-day forecast -->
@@ -110,19 +112,58 @@
                 </article>
             </div>
 
-            <aside id="map" class="col-sm-12 col-md-3 d-flex align-self-center" style="height: 40vw; border: 1px solid red;"></aside>
-            <!-- This div is used by Google Maps -->
+            <!-- <aside id="map" class="col-sm-12 col-md-4 d-flex align-self-center"></aside> -->
         </div>
     </section>
     <!-- <hr> -->
     <section class="container">
         <div class="row">
             <ul id="history-list" class="d-inline-flex col-12" style="list-style: none;">
-                <li id="history-item0" class="history-item">0</li>
-                <li id="history-item1" class="history-item">1</li>
-                <li id="history-item2" class="history-item">2</li>
-                <li id="history-item3" class="history-item">3</li>
-                <li id="history-item4" class="history-item">4</li>
+                <li id="history-item0" class="history-item d-flex flex-column align-items-start">
+                    <p class="mb-0"> 0</p>
+                    <h4 class="history-city align-self-center text-center mb-1 mt-0"></h4>
+                    <p> </p>
+                    <p>  </p>
+                    <p class="history-text align-self-center text-center"><span class="history-description"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-temperature"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-humidity"></span></p>
+                </li>
+                <li id="history-item1" class="history-item d-flex flex-column align-items-start">
+                    <p class="mb-0"> 1</p>
+                    <h4 class="history-city align-self-center text-center mb-1 mt-0"></h4>
+                    <p> </p>
+                    <p>  </p>
+                    <p class="history-text align-self-center text-center"><span class="history-description"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-temperature"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-humidity"></span></p>    
+                </li>
+                <li id="history-item2" class="history-item d-flex flex-column align-items-start">
+                    <p class="mb-0"> 2</p>
+                    <h4 class="history-city align-self-center text-center mb-1 mt-0"></h4>
+                    <p> </p>
+                    <p>  </p>
+                    <p class="history-text align-self-center text-center"><span class="history-description"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-temperature"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-humidity"></span></p>
+                </li>
+                <li id="history-item3" class="history-item d-flex flex-column align-items-start">
+                    <p class="mb-0"> 3</p>
+                    <h4 class="history-city align-self-center text-center mb-1 mt-0"></h4>
+                    <p> </p>
+                    <p>  </p>
+                    <p class="history-text align-self-center text-center"><span class="history-description"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-temperature"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-humidity"></span></p>
+                </li>
+                <li id="history-item4" class="history-item d-flex flex-column align-items-start">
+                    <p class="mb-0"> 4</p>
+                    <h4 class="history-city align-self-center text-center mb-1 mt-0"></h4>
+                    <p> </p>
+                    <p>  </p>
+                    <p class="history-text align-self-center text-center"><span class="history-description"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-temperature"></span></p>
+                    <p class="history-text align-self-center text-center"><span class="history-humidity"></span></p>
+                </li>
             </ul>
         </div>
     </section>

@@ -1,11 +1,14 @@
 //  **  Declarations
 
+const _CORS_SERVER = "https://polar-bayou-73801.herokuapp.com/";
+
 const _QTYPE_CURRENT_WEATHER = 1;
 const _QTYPE_FORECAST_WEATHER = 2;
 const _QTYPE_UVINDEX = 3;
 const _QTYPE_PLACE = 4;
+const _QTYPE_MAP = 5;
 
-const _GOOGLECLOUD_APIKEY = "&key=AIzaSyDi4oH60AbRlXQ_8dxOXMErKrg4Vs1nED8";
+// const _GOOGLECLOUD_APIKEY = "&key=AIzaSyDi4oH60AbRlXQ_8dxOXMErKrg4Vs1nED8";
 
 //  OpenWeather API
 const _OPENWEATHER_BASE = "https://api.openweathermap.org/data/2.5";           
@@ -23,18 +26,16 @@ const _OPENWEATHER_LATLON_QUERY = "?lat=%LAT%&lon=%LON%";                       
 const _OPENWEATHER_ZIP_QUERY = "?zip=%ZIP%,us";                                 //   where %ZIP% is the code
 
 //  MapQuest API
-// const _MAPQUEST_BASE = "http://www.mapquestapi.com/search/v4";                 
-// const _MAPQUEST_PLACE_APICALL = "/place";                                       //  For the location
-// const _MAPQUEST_LATLON = "?location=%LON%%2C%20%LAT%";                             //  where %LAT% is latitude and %LON% is longitude.
-// const _MAPQUEST_SORT = "&sort=relevance";                                       //  By relevance or by distance
-// const _MAPQUEST_FEEDBACK = "&feedback=false";                                   //  ?
-// const _MAPQUEST_APIKEY = "&key=s57L9cRQk0CZGiyqnipytbVrVQw9j2Dn";               //  API Key
-// const _MAPQUEST_CITY_QUERY = "&q=%CITY%";                                       //  where %CITY% is the city name
-// const _MAPQUEST_CITYSTATE_QUERY = "&q=%CITY%%2C%STATE%";                        //  where %CITY% is the city name and %STATE% is the name of the state.
+const _MAPQUEST_GEOCODE_BASE = "http://open.mapquestapi.com/geocoding/v1";   
+const _MAPQUEST_MAP_BASE = "https://open.mapquestapi.com/staticmap/v5";
 
-const _MAPQUEST_BASE = "http://open.mapquestapi.com/geocoding/v1";                 
 const _MAPQUEST_PLACE_APICALL = "/reverse";                                       //  For the location
+const _MAPQUEST_MAP_APICALL = "/map";
+
 const _MAPQUEST_LATLON = "?location=%LAT%,%LON%";                             //  where %LAT% is latitude and %LON% is longitude.
+const _MAPQUEST_CENTER = "?center=%CITY%,%STATE%";
+const _MAPQUEST_SIZE = "&size=@%SCALE%x";
+
 const _MAPQUEST_APIKEY = "&key=s57L9cRQk0CZGiyqnipytbVrVQw9j2Dn";               //  API Key
 
 
@@ -44,6 +45,7 @@ var _currentWeather = [];
 var _forecastWeather = [];
 var _uvIndex = [];
 var _placeData = [];
+var _cityHistory = [];
 var _searchIndex = -1;
 var _histIndex = -1;
 
@@ -121,7 +123,7 @@ function queryWeather(searchTerm, queryType) {
  * @param {*} currentWeatherResponse Response from Current Weather query
  */
 function queryPlace(currentWeatherResponse) {
-    var apiCall = _MAPQUEST_BASE;
+    var apiCall = _MAPQUEST_GEOCODE_BASE;
     var queryString = "";
 
     var apiKey = _MAPQUEST_APIKEY;
@@ -148,6 +150,17 @@ function queryUVIndex(currentWeatherResponse) {
     queryString = apiCall + _OPENWEATHER_UV_APICALL + latLonString + apiKey;
 
     runAjaxQuery(queryString, _QTYPE_UVINDEX);
+}
+
+function queryMap(cityName, stateName) {
+    var apiCall = _MAPQUEST_MAP_BASE + _MAPQUEST_MAP_APICALL;
+    var mapCenter = _MAPQUEST_CENTER.replace("%CITY%", cityName);
+    mapCenter = mapCenter.replace("%STATE%", stateName);
+    var apiKey = _MAPQUEST_APIKEY;
+
+    let queryString = apiCall + mapCenter + apiKey;
+
+    sendAjax_CORS(queryString);
 }
 
 /**
@@ -184,12 +197,17 @@ function runAjaxQuery(queryString, queryType) {
                 let cityName = response.results[0].locations[0].adminArea5;
                 let stateName = response.results[0].locations[0].adminArea3;
                 let countryName = response.results[0].locations[0].adminArea1;
+                let regionName = "";
+                let latitude = response.results[0].locations[0].latLng.lat;
+                let longitude = response.results[0].locations[0].latLng.lng;
                 let msgResponse = "";
 
                 if (countryName == "US") {
                     msgResponse = cityName + ", " + stateName;                    
+                    regionName = stateName;
                 } else {
                     msgResponse = cityName + ", " + countryName;
+                    regionName = countryName;
                 }
 
                 //  Add this to the Search Dropdown
@@ -197,6 +215,30 @@ function runAjaxQuery(queryString, queryType) {
                 _cityName = msgResponse
                 $("#city-name").text(_cityName);
                 $("#current-date").text(_currentDate);
+
+                var searchDropdown = $("#search-dropdown");
+                if (searchDropdown.children("#dropdown-" + cityName).length < 1) {
+                    searchDropdown.append($('<a id="dropdown-' + cityName + '" class="dropdown-item" href="#">' + _cityName + '</a>'));
+                }
+
+                let historyItem = new CityHistory(_searchIndex, cityName, regionName, latitude, longitude);
+                
+                if (!cityHistoryContains(cityName, regionName)) {
+                    _cityHistory.push(historyItem);
+                }
+                if (_cityHistory.length > 5) {
+                    _cityHistory.shift();
+                }
+
+                renderHistory(historyItem);
+
+                // queryMap(cityName, regionName);
+
+                break;
+
+            case _QTYPE_MAP:
+                console.log(response);
+                // $("#map").append(response);
                 break;
 
             default:
@@ -380,26 +422,51 @@ function renderResult(queryType) {
             break;
         default:
     }
+};
 
-    // cityName = _currentWeather[_searchIndex].name;
-
-//  What if I also showed the city on a map?
-
-// map = new google.maps.Map(document.getElementById('map'), {
-//     center: {lat: -34.397, lng: 150.644},           //  lat/lon go here
-//     zoom: 8                         //  Slightly larger than a city
-// });
-
-
-
-
-
+/**
+ * Commit search history to the screen
+ * @param {object} historyItem 
+ */
+function renderHistory() {
 
 // WHEN I click on a city in the search history
 // THEN I am again presented with current and future conditions for that city
 
+    for (var i = 0; i < _cityHistory.length; i++) {
+        childI = $("#history-item" + i);
 
-};
+        let historicalWeather = _currentWeather[_cityHistory[i].index];
+
+        let cityName = _cityHistory[i].name 
+        if (cityName.length < 11) {
+            cityName += ", " + _cityHistory[i].state;
+        }   
+        let weatherDescription = historicalWeather.weather[0].description;
+        let weatherTemperature = kelvinToFahrenheit(historicalWeather.main.temp).toFixed(1) + "\xB0F";
+        let weatherHumidity = historicalWeather.main.humidity + "%";
+
+        let backgroundImage = getWeatherIconURL(historicalWeather.weather[0].icon);
+        
+        childI.find(".history-city").text(cityName);
+        childI.find(".history-description").text(weatherDescription);
+        childI.find(".history-temperature").text(weatherTemperature);
+        childI.find(".history-humidity").text(weatherHumidity);
+
+        let imageSize = "80%";
+        if (window.screen.availWidth < 450) {
+            imageSize = "50%";
+        }
+
+        let styleCSS = "background-image: url(" + backgroundImage + "); " +
+                    "background-position: top; background-repeat: no-repeat;" +
+                    "background-size: " + imageSize + ";";
+        
+        childI.attr("style", styleCSS);
+    };
+
+}
+
 
 /**
  * Convert Kelvin temperatures to Fahrenheit
@@ -624,16 +691,96 @@ function weatherIcon(weatherCode) {
     return iconCode;
 };
 
+/**
+ * Use with the NEW keyword to create a History object
+ * @param {*} arrayIndex Index of entry in arrays
+ * @param {*} cityName Name of city
+ * @param {*} cityState Name of state or country
+ * @param {*} cityLatitude Latitude of location
+ * @param {*} cityLongitude Longitude of location
+ */
+function CityHistory(arrayIndex, cityName, cityState, cityLatitude, cityLongitude) {
+    return {
+        index: arrayIndex,
+        name: cityName,
+        state: cityState,
+        lat: cityLatitude,
+        lon: cityLongitude
+    }
+}
+
+/**
+ * Checks to see if the city already exists in the history
+ * @param {*} cityName Name of city
+ * @param {*} cityState State or Country of city
+ */
+function cityHistoryContains(cityName, cityState) {
+    var returnValue = false;
+
+    if (!cityName || !cityState) {
+        return false;
+    }
+
+    cityName = cityName.toUpperCase();
+    cityState = cityState.toUpperCase();
+
+    for (var i = 0; i < _cityHistory.length; i++) {
+        var city = _cityHistory[i].name.toUpperCase();
+        var state = _cityHistory[i].state.toUpperCase();
+        if ((cityName == city) && (cityState == state)) {
+            returnValue = true;
+            break;
+        }
+    }
+
+    return returnValue;
+}
+
+/**
+ * Send specified Ajax query
+ * @param {*} queryString Full API Call, including http(s)://
+ */
+function sendAjax_CORS(queryString) {
+    queryString = _CORS_SERVER + queryString;
+
+    $.ajax({
+        method: "GET",
+        url: queryString
+    }).then(function (response) {
+        // console.log(response);
+        $("#map").append($('<img src="' + response + '" type="jpg">'));
+    });
+};
+
+
+
 //  **  Events
 
 /**
  * Click event handler for Search button in the nav bar
  */
 $("#search-city-btn").on("click", function() {
+    event.preventDefault();
+
     searchTerm = $("#search-city").val();
     queryOpenweather(searchTerm);
-})
+});
 
+$(".history-item").on("click", function() {
+    var itemIndex = this.id.substring(this.id.length - 1);
+
+    if (itemIndex < _cityHistory.length) {
+        var cityName = _cityHistory[itemIndex].name;
+        var stateName = _cityHistory[itemIndex].state;
+        var searchTerm = cityName + ", " + stateName;
+        queryOpenweather(searchTerm);
+    };
+});
+
+// $(".dropdown-item").on("click", function() {
+//     var searchTerm = this.textContent;
+//     queryOpenweather(searchTerm);
+// });
 
 //  **  Logic
 
