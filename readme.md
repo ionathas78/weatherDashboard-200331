@@ -42,5 +42,5 @@ reliably if you enter the state or country with the city, but it's not required.
 can click or tap on a city in the history list at the bottom to display it.
 
 ## Screenshots
-![Main Page](./Assets/WeatherDash_Main.jpg)
-![Main Page, Filled](./Assets/WeatherDash_Filled.jpg)
+![Main Page](./Assets/WeatherDash_Main.png)
+![Main Page, Filled](./Assets/WeatherDash_Filled.png)
