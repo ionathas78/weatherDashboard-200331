@@ -197,23 +197,16 @@ function renderFiveDay() {
         let dayName = moment(fiveDay.list[idx].dt_txt).format("ddd");
         let weatherMain = fiveDay.list[idx].weather[0].main;
         let weatherDescription = fiveDay.list[idx].weather[0].description;
-        let weatherTemperature = kelvinToFahrenheit(fiveDay.list[idx].main.temp);
+        let weatherTemperature = kelvinToFahrenheit(fiveDay.list[idx].main.temp).toFixed(1);
         let weatherHumidity = fiveDay.list[idx].main.humidity;
 
         let backgroundImage = getWeatherIconURL(fiveDay.list[idx].weather[0].id);
 
-        childI.text(dayName);
-        var pBlank = $("<p>").text(" ");
-        var pBlank2 = $("<p>").text("  ");
-        var pBlank3 = $("<p>").text("   ");
-        var pMain = $("<p>").text(" --- " + weatherMain + " --- ");
-        pMain.addClass("forecast-text");
-        var pDescription = $("<p>").text(weatherDescription);
-        pDescription.addClass("forecast-text");
-        var pTemperature = $("<p>").text("Temp: " + weatherTemperature.toFixed(1) + "\xB0 F");
-        pTemperature.addClass("forecast-text");
-        var pHumidity = $("<p>").text("Humidity: " + weatherHumidity + "%");
-        pHumidity.addClass("forecast-text");
+        childI.children(".forecast-day").text(dayName);
+        childI.find(".forecast-main").text(weatherMain);
+        childI.find(".forecast-description").text(weatherDescription);
+        childI.find(".forecast-temperature").text(weatherTemperature);
+        childI.find(".forecast-humidity").text(weatherHumidity);
 
         let imageSize = "100%";
         if (window.screen.availWidth < 450) {
@@ -225,7 +218,7 @@ function renderFiveDay() {
                     "background-size: " + imageSize + ";";
         
         childI.attr("style", styleCSS);
-        childI.append(pBlank, pBlank2, pBlank3, pMain, pDescription, pTemperature, pHumidity);
+        // childI.append(pBlank, pBlank2, pBlank3, pMain, pDescription, pTemperature, pHumidity);
         // console.log(childI);
     };
 };
@@ -240,8 +233,15 @@ function renderCurrent() {
 
     // WHEN I view the UV index
     // THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-
     
+    var currentWeather = _currentWeather[_searchIndex];
+
+
+
+
+};
+
+function populateCurrentPanel () {
 
 };
 
