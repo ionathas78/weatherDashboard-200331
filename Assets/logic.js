@@ -1,5 +1,8 @@
 //  **  Declarations
 
+//  This is a Heroku server I launched running Rob Wu's excellent cors-anywhere code from 
+//  https://github.com/Rob--W/cors-anywhere. It was for the static map API, so I didn't wind up using it, 
+//  but it wasn't because the CORS headers weren't working.
 const _CORS_SERVER = "https://polar-bayou-73801.herokuapp.com/";
 
 const _QTYPE_CURRENT_WEATHER = 1;
@@ -737,7 +740,7 @@ function cityHistoryContains(cityName, cityState) {
 }
 
 /**
- * Send specified Ajax query
+ * Send specified Ajax query with CORS issues.
  * @param {*} queryString Full API Call, including http(s)://
  */
 function sendAjax_CORS(queryString) {
